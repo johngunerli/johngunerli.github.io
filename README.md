@@ -1,1 +1,0 @@
-# johngunerli.github.io
