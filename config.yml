@@ -1,0 +1,78 @@
+baseURL: "https://arkalim.org"
+languageCode: en-us
+title: johngunerli
+theme: PaperMod
+
+menu:
+  main:
+    - identifier: home
+      name: Home
+      url: /
+      weight: 10
+    - identifier: blog
+      name: Blog
+      url: /blog
+      weight: 20
+    - identifier: CV
+      name: CV
+      url: "https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing"
+      weight: 40
+
+params:
+  # theme
+  showToc: true
+  TocOpen: false
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  hideMeta: false
+
+  # for enchanced SEO
+  env: production
+
+  # Home Page
+  profileMode:
+    enabled: true
+    title: "John Gunerli"
+    subtitle: Hi, 
+      I'm John Gunerli, a 5th-year Computer Science student at Georgia Institute of Technology completing my Bachelors this May with a thesis, and start my Masters in August 2024. I'm interested in the intersection of intelligence and people in computer science, particularly how humans interact with computers and computer-based systems. My focus tends to vary depending on the project I'm working on, but some areas I'm interested in include human-computer interaction, data analytics and visualization, robotics, and artificial intelligence. I'm active on this platform and can be reached by DM or email at hakancangunerli [at] protonmail [dot] com or hakancangunerli [at] gatech [dot] edu for Georgia Tech-related inquiries.
+
+  # List View
+  hideDescriptionInList: false
+
+  # cover image for posts
+  cover:
+    hiddenInList: false # hide on list pages and home
+    hiddenInSingle: false # hide on single page
+
+  socialIcons:
+    - name: "email"
+      url: "mailto:hakancangunerli@gmail.com"
+    - name: "linkedin"
+      url: "http://www.linkedin.com/in/hakancangunerli/"
+    - name: "github"
+      url: "https://github.com/johngunerli"
+    - name: "youtube"
+      url: "https://www.youtube.com/@johngunerli/"
+
+  # text search
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    keys: ["title", "permalink", "summary", "content"]
+
+# for search using Fuse.js
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+# allow HTML in MD
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
