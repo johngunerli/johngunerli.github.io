@@ -131,23 +131,20 @@
     .input-wrap { width: 100%; max-width: 620px; animation: fade-up 0.5s 0.2s ease both; }
     .input-box {
       background: var(--input-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 14px;
-      display: flex; align-items: center; gap: 10px;
+      border-radius: 16px; padding: 12px 14px 10px;
+      display: flex; flex-direction: column; gap: 8px;
       transition: border-color 0.15s;
     }
     .input-box:focus-within { border-color: var(--border-alt); }
-    .plus-btn {
-      width: 26px; height: 26px; border-radius: 7px;
-      border: 1px solid var(--border); background: transparent;
-      color: var(--text-2); display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; cursor: pointer; transition: background 0.12s, color 0.12s;
-    }
-    .plus-btn:hover { background: var(--border); color: var(--text); }
     .input-field {
-      flex: 1; background: none; border: none; outline: none;
+      background: none; border: none; outline: none;
       font-family: 'DM Sans', sans-serif; font-size: 14.5px; color: var(--text);
+      width: 100%; resize: none; min-height: 24px; line-height: 1.5;
     }
     .input-field::placeholder { color: var(--text-3); }
+    .input-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+    }
     .send-btn {
       width: 30px; height: 30px; border-radius: 8px;
       background: var(--accent); border: none; color: #fff;
@@ -287,8 +284,18 @@
     .lang-r       { background: #198CE7; }
     .lang-jupyter { background: #DA5B0B; }
 
+    /* ── ARTIFACTS ──────────────────────────────────────── */
+    .artifacts-grid {
+      columns: 2; gap: 16px; max-width: 720px;
+    }
+    .artifacts-grid .ig-wrap {
+      break-inside: avoid; margin-bottom: 16px;
+    }
+    .artifacts-grid .instagram-media { min-width: unset !important; width: 100% !important; }
+    @media (max-width: 600px) { .artifacts-grid { columns: 1; } }
+
     /* ── MODEL SELECTOR ─────────────────────────────── */
-    .model-wrap { position: relative; padding: 7px 2px 0; }
+    .model-wrap { position: relative; }
     .model-btn {
       display: inline-flex; align-items: center; gap: 5px;
       font-size: 12px; color: var(--text-3); background: none;
@@ -341,7 +348,7 @@
       <div class="brand-mark">jg</div>
       johngunerli
     </div>
-    <a href="mailto:hakancangunerli@gmail.com" class="icon-btn" title="Email">
+    <a href="mailto:me@johngunerli.com" class="icon-btn" title="Email">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
     </a>
   </div>
@@ -357,6 +364,10 @@
     <button class="nav-link" id="nav-projects" onclick="navigate('/projects')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       Projects
+    </button>
+    <button class="nav-link" id="nav-artifacts" onclick="navigate('/artifacts')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Artifacts
     </button>
     <a href="https://github.com/johngunerli" target="_blank" class="nav-link">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
@@ -446,6 +457,15 @@ const projectGroups = [
   ]},
 ];
 
+// ── ARTIFACTS DATA ────────────────────────────────────────────
+const instagramPosts = [
+  { url: 'https://www.instagram.com/p/DSRbd1Xjkvk/' },
+  { url: 'https://www.instagram.com/p/DPCVc4HD5Hj/' },
+  { url: 'https://www.instagram.com/p/DOUQ7JOj7UM/' },
+  { url: 'https://www.instagram.com/p/DFQP3OtRhQ5/' },
+  // Add more posts here: { url: 'https://www.instagram.com/p/YOUR_POST_ID/' },
+];
+
 // ── VIEWS ──────────────────────────────────────────────────
 function homeView() {
   const h = new Date().getHours();
@@ -457,16 +477,15 @@ function homeView() {
     </div>
     <div class="input-wrap">
       <div class="input-box">
-        <button class="plus-btn" onclick="document.getElementById('q').focus()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        </button>
         <input class="input-field" id="q" type="text" placeholder="Ask about John…"
                oninput="toggleSend(this)" onkeydown="onEnter(event)" />
-        <button class="send-btn" id="send-btn" onclick="submitQuery()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
+        <div class="input-toolbar">
+          ${modelSelectorHTML()}
+          <button class="send-btn" id="send-btn" onclick="submitQuery()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
       </div>
-      ${modelSelectorHTML()}
     </div>
     <div class="chips">
       <button class="chip" onclick="window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank')">
@@ -478,8 +497,11 @@ function homeView() {
       <button class="chip" onclick="navigate('/projects')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Projects
       </button>
-      <button class="chip" onclick="location.href='mailto:hakancangunerli@gmail.com'">
+      <button class="chip" onclick="location.href='mailto:me@johngunerli.com'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email
+      </button>
+      <button class="chip" onclick="window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Meeting
       </button>
       <button class="chip" onclick="window.open('https://github.com/johngunerli','_blank')">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub
@@ -539,6 +561,32 @@ function projectsView() {
   </div>`;
 }
 
+function artifactsView() {
+  // Load Instagram embed script if not already loaded
+  if (!document.getElementById('instagram-embed-script')) {
+    const script = document.createElement('script');
+    script.id = 'instagram-embed-script';
+    script.async = true;
+    script.src = '//www.instagram.com/embed.js';
+    document.body.appendChild(script);
+  } else if (window.instgrm) {
+    // Re-process embeds if script already loaded
+    setTimeout(() => window.instgrm.Embeds.process(), 100);
+  }
+  
+  return `<div class="view-page">
+    <h1 class="page-title">Artifacts</h1>
+    <p class="page-desc">A collection of visual moments and creative explorations.</p>
+    <div class="artifacts-grid">
+      ${instagramPosts.map(post => `
+        <div class="ig-wrap">
+          <blockquote class="instagram-media" data-instgrm-permalink="${post.url}" data-instgrm-version="14"></blockquote>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
 function notFoundView() {
   return `<div class="view-page"><h1 class="page-title">Not found.</h1></div>`;
 }
@@ -548,6 +596,7 @@ function getView(path) {
   if (path === '/' || path === '') return homeView();
   if (path === '/blog')            return blogListView();
   if (path === '/projects')        return projectsView();
+  if (path === '/artifacts')       return artifactsView();
   if (path.startsWith('/blog/'))   return postView(path.replace('/blog/',''));
   return notFoundView();
 }
@@ -557,6 +606,7 @@ function updateNav(path) {
   if (path === '/')         document.getElementById('nav-home')?.classList.add('active');
   if (path.startsWith('/blog')) document.getElementById('nav-blog')?.classList.add('active');
   if (path === '/projects') document.getElementById('nav-projects')?.classList.add('active');
+  if (path === '/artifacts') document.getElementById('nav-artifacts')?.classList.add('active');
   const map = { '/blog/reflections-on-arts':'recent-arts', '/blog/social-computing':'recent-social', '/blog/intellectual-curiosity':'recent-curiosity', '/blog/helloworld':'recent-hello' };
   if (map[path]) document.getElementById(map[path])?.classList.add('active');
 }
@@ -574,9 +624,6 @@ function render(path) {
   main.scrollTop = 0;
 }
 
-window.addEventListener('popstate', () => { chatHistory = []; render(location.pathname); });
-render(location.pathname);
-
 // ── CHAT STATE ─────────────────────────────────────────────
 let chatHistory = [];
 let inChatMode = false;
@@ -588,6 +635,9 @@ const MODEL_OPTIONS = [
   { id: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Medium', sub: 'Llama 3.3 70B' },
   { id: 'openai/gpt-oss-120b:free',               label: 'Large',  sub: 'GPT-OSS 120B' },
 ];
+
+window.addEventListener('popstate', () => { chatHistory = []; render(location.pathname); });
+render(location.pathname);
 
 function currentModelLabel() {
   return MODEL_OPTIONS.find(m => m.id === selectedModel)?.label ?? 'Auto';
@@ -654,30 +704,34 @@ Instructions:
 - Keep a friendly, professional tone — like a well-informed colleague, not a corporate bot.`;
 
 const navRoutes = {
-  resume:   ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
-  cv:       ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
-  blog:     ()=>navigate('/blog'),
-  projects: ()=>navigate('/projects'),
-  code:     ()=>navigate('/projects'),
-  github:   ()=>window.open('https://github.com/johngunerli','_blank'),
-  linkedin: ()=>window.open('https://www.linkedin.com/in/hakancangunerli/','_blank'),
-  youtube:  ()=>window.open('https://www.youtube.com/@johngunerli/','_blank'),
-  email:    ()=>{ location.href='mailto:hakancangunerli@gmail.com'; },
-  contact:  ()=>{ location.href='mailto:hakancangunerli@gmail.com'; },
+  resume:    ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
+  cv:        ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
+  blog:      ()=>navigate('/blog'),
+  projects:  ()=>navigate('/projects'),
+  code:      ()=>navigate('/projects'),
+  artifacts: ()=>navigate('/artifacts'),
+  photos:    ()=>navigate('/artifacts'),
+  gallery:   ()=>navigate('/artifacts'),
+  github:    ()=>window.open('https://github.com/johngunerli','_blank'),
+  linkedin:  ()=>window.open('https://www.linkedin.com/in/hakancangunerli/','_blank'),
+  youtube:   ()=>window.open('https://www.youtube.com/@johngunerli/','_blank'),
+  email:     ()=>{ location.href='mailto:me@johngunerli.com'; },
+  contact:   ()=>{ location.href='mailto:me@johngunerli.com'; },
+  meeting:   ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
+  calendar:  ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
 };
 
 function chatInputHTML() {
   return `<div class="input-box">
-    <button class="plus-btn" onclick="document.getElementById('q').focus()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </button>
     <input class="input-field" id="q" type="text" placeholder="Ask about John…"
            oninput="toggleSend(this)" onkeydown="onEnter(event)" />
-    <button class="send-btn" id="send-btn" onclick="submitQuery()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </button>
-  </div>
-  ${modelSelectorHTML()}`;
+    <div class="input-toolbar">
+      ${modelSelectorHTML()}
+      <button class="send-btn" id="send-btn" onclick="submitQuery()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>`;
 }
 
 function switchToChatMode() {
@@ -759,9 +813,10 @@ async function submitQuery() {
   let answered = false;
   for (const model of models) {
     try {
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      // Call our Cloudflare Function instead of OpenRouter directly
+      const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Authorization': 'Bearer __OPENROUTER_KEY__', 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model,
           messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],

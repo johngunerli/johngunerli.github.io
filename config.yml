@@ -49,7 +49,7 @@ params:
 
   socialIcons:
     - name: "email"
-      url: "mailto:hakancangunerli@gmail.com"
+      url: "mailto:me@johngunerli.com"
     - name: "linkedin"
       url: "https://www.linkedin.com/in/hakancangunerli/"
     - name: "github"
