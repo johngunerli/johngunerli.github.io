@@ -39,6 +39,24 @@
       padding: 10px;
       border-right: 1px solid var(--border);
       overflow-y: auto;
+      transition: transform 0.3s ease;
+    }
+    
+    /* Mobile sidebar overlay */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: var(--bg);
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 2px 0 8px rgba(0,0,0,0.5);
+      }
     }
     .sidebar-top {
       display: flex; align-items: center; justify-content: space-between;
@@ -333,16 +351,69 @@
     .model-item.selected .check { opacity: 1; }
     .model-item-sub { font-size: 11px; color: var(--text-3); }
 
+    /* Mobile hamburger button */
+    .mobile-menu-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--chip-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001;
+      transition: background 0.2s;
+    }
+    .mobile-menu-btn:hover {
+      background: var(--input-bg);
+    }
+    
+    /* Mobile overlay backdrop */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.open {
+      opacity: 1;
+    }
+
     @media (max-width: 768px) {
-      .sidebar { display: none; }
+      .mobile-menu-btn { display: flex; }
+      .sidebar-overlay { display: block; }
       .view-page { padding: 32px 24px; }
       .greeting-text { font-size: 26px; }
+      .view-home { padding-top: 80px; }
     }
   </style>
 </head>
 <body>
 
-<aside class="sidebar">
+<!-- Mobile menu button -->
+<button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Menu">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<!-- Sidebar overlay for mobile -->
+<div class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-top">
     <div class="brand" onclick="navigate('/')">
       <div class="brand-mark">jg</div>
@@ -721,6 +792,59 @@ const navRoutes = {
   calendar:  ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
 };
 
+// Enhanced pattern matching for natural language queries (no AI needed!)
+function detectIntent(query) {
+  const lower = query.toLowerCase();
+  
+  // Resume/CV patterns
+  if (/\b(show|see|view|open|get|download)\b.*\b(resume|cv)\b/.test(lower) || 
+      /\bresume\b|\bcv\b/.test(lower)) {
+    return navRoutes.resume;
+  }
+  
+  // Blog patterns
+  if (/\b(show|see|read|view)\b.*\b(blog|posts?|writing|articles?)\b/.test(lower) ||
+      /\bblog\b|\bposts?\b/.test(lower)) {
+    return navRoutes.blog;
+  }
+  
+  // Projects patterns
+  if (/\b(show|see|view)\b.*\b(projects?|work|code|portfolio)\b/.test(lower) ||
+      /\bprojects?\b|\bwork\b|\bportfolio\b/.test(lower)) {
+    return navRoutes.projects;
+  }
+  
+  // Artifacts patterns
+  if (/\b(show|see|view)\b.*\b(artifacts?|photos?|gallery|pictures?|images?)\b/.test(lower) ||
+      /\bartifacts?\b|\bphotos?\b|\bgallery\b/.test(lower)) {
+    return navRoutes.artifacts;
+  }
+  
+  // GitHub patterns
+  if (/\b(show|open|go to)\b.*\bgithub\b/.test(lower) || /\bgithub\b/.test(lower)) {
+    return navRoutes.github;
+  }
+  
+  // LinkedIn patterns
+  if (/\b(show|open|go to)\b.*\blinkedin\b/.test(lower) || /\blinkedin\b/.test(lower)) {
+    return navRoutes.linkedin;
+  }
+  
+  // Contact/Email patterns
+  if (/\b(email|contact|reach|message)\b/.test(lower) || 
+      /how (can i|do i|to) (contact|reach|email)/.test(lower)) {
+    return navRoutes.email;
+  }
+  
+  // Meeting patterns
+  if (/\b(schedule|book|set up|arrange)\b.*\b(meeting|call|chat)\b/.test(lower) ||
+      /\bmeeting\b|\bschedule\b|\bcalendar\b/.test(lower)) {
+    return navRoutes.meeting;
+  }
+  
+  return null;
+}
+
 function chatInputHTML() {
   return `<div class="input-box">
     <input class="input-field" id="q" type="text" placeholder="Ask about John…"
@@ -792,9 +916,14 @@ async function submitQuery() {
   const q = input.value.trim();
   if (!q) return;
 
-  const lower = q.toLowerCase();
-  const route = Object.entries(navRoutes).find(([k]) => lower.includes(k));
-  if (route) { input.value = ''; toggleSend(input); route[1](); return; }
+  // Try pattern matching first (no AI needed!)
+  const action = detectIntent(q);
+  if (action) { 
+    input.value = ''; 
+    toggleSend(input); 
+    action(); 
+    return; 
+  }
 
   input.value = ''; toggleSend(input);
 
@@ -840,6 +969,21 @@ async function submitQuery() {
 }
 
 function onEnter(e) { if (e.key === 'Enter') submitQuery(); }
+
+// ── MOBILE SIDEBAR ─────────────────────────────────────────
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  sidebar?.classList.toggle('open');
+  overlay?.classList.toggle('open');
+}
+
+// Close sidebar when clicking a nav link on mobile
+document.addEventListener('click', (e) => {
+  if (window.innerWidth <= 768 && e.target.closest('.nav-link, .recent-link')) {
+    setTimeout(() => toggleMobileSidebar(), 100);
+  }
+});
 </script>
 </body>
 </html>
