@@ -49,7 +49,7 @@
         left: 0;
         top: 0;
         bottom: 0;
-        z-index: 1000;
+        z-index: 200;
         background: var(--bg);
         transform: translateX(-100%);
       }
@@ -107,8 +107,51 @@
       transition: background 0.12s, color 0.12s;
       cursor: pointer; background: none; border: none;
       width: 100%; text-align: left; font-family: inherit;
+      position: relative;
     }
     .recent-link:hover, .recent-link.active { background: var(--chip-bg); color: var(--text); }
+    .recent-link:hover .delete-chat { opacity: 1; }
+    .delete-chat {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--input-bg);
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      padding: 0;
+    }
+    .delete-chat:hover {
+      background: #ff4444;
+      color: white;
+    }
+    .new-chat-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-bottom: 8px;
+      font-family: inherit;
+    }
+    .new-chat-btn:hover {
+      opacity: 0.9;
+    }
 
     .sidebar-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
     .user-row { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; }
@@ -366,7 +409,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 1001;
+      z-index: 100;
       transition: background 0.2s;
     }
     .mobile-menu-btn:hover {
@@ -382,20 +425,30 @@
       right: 0;
       bottom: 0;
       background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
+      z-index: 199;
       opacity: 0;
       transition: opacity 0.3s ease;
+      pointer-events: none;
     }
     .sidebar-overlay.open {
       opacity: 1;
+      pointer-events: auto;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar-overlay {
+        display: block;
+      }
     }
 
     @media (max-width: 768px) {
       .mobile-menu-btn { display: flex; }
-      .sidebar-overlay { display: block; }
-      .view-page { padding: 32px 24px; }
+      .view-page { padding: 32px 24px; padding-top: 72px; }
       .greeting-text { font-size: 26px; }
-      .view-home { padding-top: 80px; }
+      .view-home { padding-top: 40px; }
+      
+      /* Make sure hamburger doesn't interfere with chat input */
+      .chat-input-area { padding-top: 12px; }
     }
   </style>
 </head>
@@ -449,12 +502,12 @@
       LinkedIn
     </a>
   </nav>
-  <div class="section-label">Recent posts</div>
-  <div class="recents">
-    <button class="recent-link" id="recent-arts"      onclick="navigate('/blog/reflections-on-arts')">Reflections on the Arts</button>
-    <button class="recent-link" id="recent-social"    onclick="navigate('/blog/social-computing')">Social Computers/Computing</button>
-    <button class="recent-link" id="recent-curiosity" onclick="navigate('/blog/intellectual-curiosity')">Intellectual Curiosity</button>
-    <button class="recent-link" id="recent-hello"     onclick="navigate('/blog/helloworld')">Hello World!</button>
+  <div class="section-label">Chat History</div>
+  <button class="new-chat-btn" onclick="startNewChat()">
+    <span style="margin-right: 4px;">+</span> New Chat
+  </button>
+  <div class="recents" id="chat-history-list">
+    <!-- Chat history will be populated here -->
   </div>
   <div class="sidebar-footer">
     <div class="user-row">
@@ -699,6 +752,149 @@ function render(path) {
 let chatHistory = [];
 let inChatMode = false;
 let selectedModel = 'auto';
+let currentSessionId = null;
+let chatSessions = [];
+
+// Load chat sessions from localStorage
+function loadChatSessions() {
+  try {
+    const saved = localStorage.getItem('chatSessions');
+    chatSessions = saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    chatSessions = [];
+  }
+  renderChatHistory();
+}
+
+// Save chat sessions to localStorage
+function saveChatSessions() {
+  try {
+    localStorage.setItem('chatSessions', JSON.stringify(chatSessions));
+  } catch (e) {
+    console.error('Failed to save chat sessions:', e);
+  }
+}
+
+// Create a new chat session
+function startNewChat() {
+  // Save current session if it has messages
+  if (currentSessionId && chatHistory.length > 0) {
+    saveCurrentSession();
+  }
+  
+  // Reset to home
+  currentSessionId = null;
+  chatHistory = [];
+  inChatMode = false;
+  navigate('/');
+  renderChatHistory();
+}
+
+// Save the current chat session
+function saveCurrentSession() {
+  if (!chatHistory.length) return;
+  
+  const existingIndex = chatSessions.findIndex(s => s.id === currentSessionId);
+  const title = chatHistory[0]?.content?.substring(0, 50) || 'New Chat';
+  const timestamp = Date.now();
+  
+  const session = {
+    id: currentSessionId || `chat_${timestamp}`,
+    title,
+    messages: [...chatHistory],
+    timestamp
+  };
+  
+  if (existingIndex >= 0) {
+    chatSessions[existingIndex] = session;
+  } else {
+    currentSessionId = session.id;
+    chatSessions.unshift(session); // Add to beginning
+  }
+  
+  // Keep only last 20 sessions
+  if (chatSessions.length > 20) {
+    chatSessions = chatSessions.slice(0, 20);
+  }
+  
+  saveChatSessions();
+  renderChatHistory();
+}
+
+// Load a chat session
+function loadChatSession(sessionId) {
+  const session = chatSessions.find(s => s.id === sessionId);
+  if (!session) return;
+  
+  currentSessionId = sessionId;
+  chatHistory = [...session.messages];
+  inChatMode = true;
+  
+  // Render the chat
+  const main = document.getElementById('main');
+  main.innerHTML = chatViewHTML();
+  
+  // Render all messages
+  const messagesContainer = document.getElementById('chat-messages');
+  messagesContainer.innerHTML = '';
+  
+  chatHistory.forEach(msg => {
+    if (msg.role === 'user') {
+      appendUserMsg(msg.content);
+    } else if (msg.role === 'assistant') {
+      // Format markdown-style links and bold in saved messages
+      const formattedContent = msg.content
+        .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+        .replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+      
+      const el = document.getElementById('chat-messages');
+      el.insertAdjacentHTML('beforeend', `
+        <div class="msg msg-assistant">
+          <div class="msg-avatar">jg</div>
+          <div class="msg-bubble">${formattedContent}</div>
+        </div>`);
+    }
+  });
+  
+  scrollChat();
+  document.getElementById('q')?.focus();
+  renderChatHistory();
+}
+
+// Delete a chat session
+function deleteChatSession(sessionId, event) {
+  event.stopPropagation();
+  chatSessions = chatSessions.filter(s => s.id !== sessionId);
+  
+  // If deleting current session, start new chat
+  if (currentSessionId === sessionId) {
+    startNewChat();
+  } else {
+    saveChatSessions();
+    renderChatHistory();
+  }
+}
+
+// Render chat history in sidebar
+function renderChatHistory() {
+  const container = document.getElementById('chat-history-list');
+  if (!container) return;
+  
+  if (chatSessions.length === 0) {
+    container.innerHTML = '<div style="padding: 8px 9px; font-size: 12px; color: var(--text-3); text-align: center;">No chat history yet</div>';
+    return;
+  }
+  
+  container.innerHTML = chatSessions.map(session => `
+    <button class="recent-link${currentSessionId === session.id ? ' active' : ''}" 
+            onclick="loadChatSession('${session.id}')">
+      ${escHtml(session.title)}
+      <button class="delete-chat" onclick="deleteChatSession('${session.id}', event)" title="Delete chat">
+        ×
+      </button>
+    </button>
+  `).join('');
+}
 
 const MODEL_OPTIONS = [
   { id: 'auto',                                   label: 'Auto',   sub: 'fallback chain' },
@@ -708,6 +904,7 @@ const MODEL_OPTIONS = [
 ];
 
 window.addEventListener('popstate', () => { chatHistory = []; render(location.pathname); });
+loadChatSessions(); // Load chat history on page load
 render(location.pathname);
 
 function currentModelLabel() {
@@ -792,54 +989,52 @@ const navRoutes = {
   calendar:  ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
 };
 
-// Enhanced pattern matching for natural language queries (no AI needed!)
+// Enhanced pattern matching for natural language queries (returns text responses!)
 function detectIntent(query) {
   const lower = query.toLowerCase();
   
-  // Resume/CV patterns
-  if (/\b(show|see|view|open|get|download)\b.*\b(resume|cv)\b/.test(lower) || 
-      /\bresume\b|\bcv\b/.test(lower)) {
-    return navRoutes.resume;
-  }
-  
-  // Blog patterns
-  if (/\b(show|see|read|view)\b.*\b(blog|posts?|writing|articles?)\b/.test(lower) ||
-      /\bblog\b|\bposts?\b/.test(lower)) {
-    return navRoutes.blog;
-  }
-  
-  // Projects patterns
-  if (/\b(show|see|view)\b.*\b(projects?|work|code|portfolio)\b/.test(lower) ||
-      /\bprojects?\b|\bwork\b|\bportfolio\b/.test(lower)) {
-    return navRoutes.projects;
-  }
-  
-  // Artifacts patterns
-  if (/\b(show|see|view)\b.*\b(artifacts?|photos?|gallery|pictures?|images?)\b/.test(lower) ||
-      /\bartifacts?\b|\bphotos?\b|\bgallery\b/.test(lower)) {
-    return navRoutes.artifacts;
-  }
-  
-  // GitHub patterns
-  if (/\b(show|open|go to)\b.*\bgithub\b/.test(lower) || /\bgithub\b/.test(lower)) {
-    return navRoutes.github;
-  }
-  
-  // LinkedIn patterns
-  if (/\b(show|open|go to)\b.*\blinkedin\b/.test(lower) || /\blinkedin\b/.test(lower)) {
-    return navRoutes.linkedin;
-  }
-  
-  // Contact/Email patterns
-  if (/\b(email|contact|reach|message)\b/.test(lower) || 
-      /how (can i|do i|to) (contact|reach|email)/.test(lower)) {
-    return navRoutes.email;
+  // Email/Contact patterns - most common query
+  if (/\b(what'?s?|what is|tell me|show|give me)\b.*\b(his|your|the|john'?s?)\b.*\b(email|contact)\b/.test(lower) ||
+      /\b(email|contact|reach|mail)\b/.test(lower)) {
+    return "John's email is **me@johngunerli.com**. Feel free to reach out!";
   }
   
   // Meeting patterns
-  if (/\b(schedule|book|set up|arrange)\b.*\b(meeting|call|chat)\b/.test(lower) ||
-      /\bmeeting\b|\bschedule\b|\bcalendar\b/.test(lower)) {
-    return navRoutes.meeting;
+  if (/\b(schedule|book|set up|arrange|meeting|calendar)\b/.test(lower)) {
+    return "You can schedule a meeting with John here: [Book a meeting](https://calendar.app.google/xzXuLCv1Ff85Gp1JA)";
+  }
+  
+  // Resume/CV patterns
+  if (/\b(resume|cv)\b/.test(lower)) {
+    return "John's resume/CV can be found in the navigation menu above.";
+  }
+  
+  // Blog patterns
+  if (/\b(blog|posts?|writing|articles?)\b/.test(lower)) {
+    return "John writes about intellectual curiosity, social computing, and the arts. Check out the **Blog** section!";
+  }
+  
+  // Projects patterns
+  if (/\b(projects?|work|code|portfolio)\b/.test(lower)) {
+    return "You can explore John's projects in the **Projects** section in the navigation.";
+  }
+  
+  // Artifacts patterns
+  if (/\b(artifacts?|photos?|gallery|pictures?|images?)\b/.test(lower)) {
+    return "Check out John's artifacts and photos in the **Artifacts** section!";
+  }
+  
+  // Social media patterns
+  if (/\bgithub\b/.test(lower)) {
+    return "John's GitHub: [github.com/johngunerli](https://github.com/johngunerli)";
+  }
+  
+  if (/\blinkedin\b/.test(lower)) {
+    return "Connect with John on [LinkedIn](https://www.linkedin.com/in/hakancangunerli/)";
+  }
+  
+  if (/\byoutube\b/.test(lower)) {
+    return "John's YouTube: [youtube.com/@johngunerli](https://www.youtube.com/@johngunerli/)";
   }
   
   return null;
@@ -858,15 +1053,19 @@ function chatInputHTML() {
   </div>`;
 }
 
-function switchToChatMode() {
-  inChatMode = true;
-  document.getElementById('main').innerHTML = `
+function chatViewHTML() {
+  return `
     <div class="view-chat">
       <div class="chat-messages" id="chat-messages"></div>
       <div class="chat-input-area">
         <div class="input-wrap">${chatInputHTML()}</div>
       </div>
     </div>`;
+}
+
+function switchToChatMode() {
+  inChatMode = true;
+  document.getElementById('main').innerHTML = chatViewHTML();
   document.getElementById('q').focus();
 }
 
@@ -898,6 +1097,38 @@ function replaceThinking(answer) {
   scrollChat();
 }
 
+// Stream instant response with typing effect
+async function streamResponse(text) {
+  const el = document.getElementById('chat-messages');
+  el.insertAdjacentHTML('beforeend', `
+    <div class="msg msg-assistant">
+      <div class="msg-avatar">jg</div>
+      <div class="msg-bubble" id="streaming-msg"></div>
+    </div>`);
+  
+  const bubble = document.getElementById('streaming-msg');
+  
+  // Convert markdown-style links and bold
+  const formattedText = text
+    .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+    .replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Simulate streaming by revealing characters
+  let displayed = '';
+  const chars = formattedText.split('');
+  
+  for (let i = 0; i < chars.length; i++) {
+    displayed += chars[i];
+    bubble.innerHTML = displayed;
+    scrollChat();
+    
+    // Random delay between 10-30ms for natural typing effect
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 20 + 10));
+  }
+  
+  bubble.removeAttribute('id');
+}
+
 function scrollChat() {
   const el = document.getElementById('chat-messages');
   if (el) el.scrollTop = el.scrollHeight;
@@ -916,21 +1147,26 @@ async function submitQuery() {
   const q = input.value.trim();
   if (!q) return;
 
-  // Try pattern matching first (no AI needed!)
-  const action = detectIntent(q);
-  if (action) { 
-    input.value = ''; 
-    toggleSend(input); 
-    action(); 
-    return; 
-  }
+  input.value = ''; 
+  toggleSend(input);
 
-  input.value = ''; toggleSend(input);
-
-  // Switch to chat mode on first AI query
+  // Switch to chat mode on first query
   if (!inChatMode) switchToChatMode(q);
 
   appendUserMsg(q);
+
+  // Try pattern matching first (instant response, no AI needed!)
+  const instantResponse = detectIntent(q);
+  if (instantResponse) {
+    // Add to chat history for pattern-matched responses too
+    chatHistory.push({ role: 'user', content: q });
+    chatHistory.push({ role: 'assistant', content: instantResponse });
+    await streamResponse(instantResponse);
+    saveCurrentSession(); // Auto-save after each exchange
+    return; 
+  }
+
+  // If no pattern match, use AI
   appendThinking();
 
   chatHistory.push({ role: 'user', content: q });
@@ -960,6 +1196,7 @@ async function submitQuery() {
       chatHistory.push({ role: 'assistant', content: answer });
       replaceThinking(answer);
       answered = true;
+      saveCurrentSession(); // Auto-save after AI response
       break;
     } catch { continue; }
   }
