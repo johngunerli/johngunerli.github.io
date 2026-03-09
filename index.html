@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>John Gunerli</title>
+  <meta name="description" content="Senior Machine Learning Engineer at UPS Capital. Georgia Tech MS CS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #1c1917;
+      --chip-bg:    #262220;
+      --input-bg:   #262220;
+      --border:     #3a3530;
+      --border-alt: #4a4540;
+      --text:       #f0ebe4;
+      --text-2:     #8b7d72;
+      --text-3:     #524744;
+      --accent:     #e0704a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────── */
+    .sidebar {
+      width: 256px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      padding: 10px;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+    .sidebar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 6px 14px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14.5px; font-weight: 500; color: var(--text);
+      text-decoration: none; letter-spacing: -0.01em; cursor: pointer;
+    }
+    .brand-mark {
+      width: 22px; height: 22px; border-radius: 5px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff;
+      letter-spacing: -0.03em; flex-shrink: 0;
+    }
+    .icon-btn {
+      width: 30px; height: 30px; border-radius: 7px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, color 0.12s; text-decoration: none;
+    }
+    .icon-btn:hover { background: var(--chip-bg); color: var(--text); }
+
+    .nav { display: flex; flex-direction: column; gap: 1px; margin-bottom: 18px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 9px; border-radius: 7px;
+      font-size: 13.5px; color: var(--text-2);
+      text-decoration: none; transition: background 0.12s, color 0.12s;
+      cursor: pointer; background: none; border: none;
+      width: 100%; text-align: left; font-family: inherit;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--chip-bg); color: var(--text); }
+
+    .section-label {
+      font-size: 10.5px; font-weight: 500; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.09em;
+      padding: 0 9px 7px; margin-top: 4px;
+    }
+    .recents { display: flex; flex-direction: column; gap: 1px; margin-bottom: 18px; }
+    .recent-link {
+      display: block; padding: 6px 9px; border-radius: 7px;
+      font-size: 13px; color: var(--text-2); text-decoration: none;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: background 0.12s, color 0.12s;
+      cursor: pointer; background: none; border: none;
+      width: 100%; text-align: left; font-family: inherit;
+    }
+    .recent-link:hover, .recent-link.active { background: var(--chip-bg); color: var(--text); }
+
+    .sidebar-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+    .user-row { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; }
+    .avatar {
+      width: 27px; height: 27px; border-radius: 50%;
+      background: linear-gradient(135deg, #e0704a 0%, #c85535 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: #fff; flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .user-role { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+
+    /* ── MAIN ────────────────────────────────────── */
+    #main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+    /* ── HOME ────────────────────────────────────── */
+    .view-home {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 32px; gap: 28px;
+    }
+    .greeting { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+    .brand-mark-lg {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.03em;
+      animation: pop-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes pop-in { from { opacity:0; transform:scale(0.5); } to { opacity:1; transform:scale(1); } }
+    .greeting-text {
+      font-family: 'Lora', serif; font-size: 34px; font-weight: 400;
+      color: var(--text); letter-spacing: -0.02em;
+      animation: fade-up 0.5s 0.1s ease both;
+    }
+    @keyframes fade-up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .input-wrap { width: 100%; max-width: 620px; animation: fade-up 0.5s 0.2s ease both; }
+    .input-box {
+      background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color 0.15s;
+    }
+    .input-box:focus-within { border-color: var(--border-alt); }
+    .plus-btn {
+      width: 26px; height: 26px; border-radius: 7px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-2); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; cursor: pointer; transition: background 0.12s, color 0.12s;
+    }
+    .plus-btn:hover { background: var(--border); color: var(--text); }
+    .input-field {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: 'DM Sans', sans-serif; font-size: 14.5px; color: var(--text);
+    }
+    .input-field::placeholder { color: var(--text-3); }
+    .send-btn {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--accent); border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      transition: background 0.12s, opacity 0.15s, transform 0.15s;
+      opacity: 0; transform: scale(0.8); pointer-events: none;
+    }
+    .send-btn.visible { opacity: 1; transform: scale(1); pointer-events: auto; }
+    .send-btn:hover { background: #c85535; }
+
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 620px; animation: fade-up 0.5s 0.3s ease both; }
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 99px;
+      border: 1px solid var(--border); background: none;
+      color: var(--text-2); font-family: 'DM Sans', sans-serif;
+      font-size: 13px; cursor: pointer; white-space: nowrap;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+    }
+    .chip:hover { border-color: var(--border-alt); color: var(--text); background: var(--chip-bg); }
+    .chip svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ── CHAT VIEW ───────────────────────────────── */
+    .view-chat {
+      flex: 1; display: flex; flex-direction: column;
+      height: 100%; overflow: hidden;
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto;
+      padding: 40px 24px 24px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    /* Each message row */
+    .msg {
+      width: 100%; max-width: 720px; margin: 0 auto;
+      animation: fade-up 0.2s ease both;
+    }
+    .msg + .msg { margin-top: 4px; }
+    .msg-user + .msg-assistant,
+    .msg-assistant + .msg-user { margin-top: 20px; }
+
+    /* User bubble */
+    .msg-user { display: flex; justify-content: flex-end; }
+    .msg-user .msg-bubble {
+      max-width: 80%;
+      background: #2e2925;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 10px 16px;
+      font-size: 14.5px; line-height: 1.65; color: var(--text);
+    }
+
+    /* Assistant row: avatar + text side by side */
+    .msg-assistant { display: flex; gap: 12px; align-items: flex-start; }
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff;
+      flex-shrink: 0; margin-top: 2px; letter-spacing: -0.03em;
+    }
+    .msg-assistant .msg-bubble {
+      flex: 1;
+      font-size: 14.5px; line-height: 1.75; color: #ccc4ba;
+      padding: 4px 0 12px;
+    }
+
+    /* Thinking dots */
+    .ai-thinking { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
+    .ai-thinking span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-3); animation: bounce 1.3s ease infinite;
+    }
+    .ai-thinking span:nth-child(2) { animation-delay: 0.2s; }
+    .ai-thinking span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,80%,100%{transform:scale(0.7);opacity:0.4;} 40%{transform:scale(1.1);opacity:1;} }
+
+    /* Bottom input */
+    .chat-input-area {
+      padding: 12px 24px 24px;
+      background: var(--bg);
+    }
+    .chat-input-area .input-wrap {
+      max-width: 720px; margin: 0 auto;
+      animation: none;
+    }
+
+    /* ── SHARED PAGE ─────────────────────────────── */
+    .view-page { flex: 1; padding: 56px 64px; }
+    .page-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 400; color: var(--text); margin-bottom: 32px; letter-spacing: -0.02em; }
+    .page-desc { font-size: 14px; color: var(--text-2); margin-bottom: 40px; }
+
+    /* Blog list */
+    .posts { display: flex; flex-direction: column; gap: 2px; max-width: 640px; }
+    .post-card {
+      display: block; padding: 18px 20px; border-radius: 10px;
+      cursor: pointer; border: 1px solid transparent;
+      background: none; width: 100%; text-align: left; font-family: inherit;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .post-card:hover { background: var(--chip-bg); border-color: var(--border); }
+    .post-date { font-size: 11.5px; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .post-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .post-desc { font-size: 13.5px; color: var(--text-2); line-height: 1.55; }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .tag { font-size: 11px; color: var(--text-3); background: var(--chip-bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 99px; }
+
+    /* Post */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-2);
+      background: none; border: none; cursor: pointer; margin-bottom: 32px;
+      font-family: inherit; transition: color 0.12s;
+    }
+    .back-btn:hover { color: var(--text); }
+    .post-meta-h { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
+    .post-h1 { font-family: 'Lora', serif; font-size: 30px; font-weight: 400; color: var(--text); letter-spacing: -0.02em; margin-bottom: 32px; max-width: 640px; line-height: 1.3; }
+    .post-body { max-width: 640px; font-size: 15.5px; line-height: 1.75; color: #c8bfb6; }
+    .post-body p { margin-bottom: 1.4em; }
+    .post-footer-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 40px; }
+
+    /* Projects */
+    .group { margin-bottom: 40px; }
+    .group-label { font-size: 11px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .projects { display: flex; flex-direction: column; gap: 2px; }
+    .project { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 14px; border-radius: 9px; text-decoration: none; border: 1px solid transparent; transition: background 0.12s, border-color 0.12s; }
+    .project:hover { background: var(--chip-bg); border-color: var(--border); }
+    .project-left { flex: 1; min-width: 0; }
+    .project-name { font-size: 14.5px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .project-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .project-lang { font-size: 11.5px; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
+    .lang-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .lang-python  { background: #3572A5; }
+    .lang-cpp     { background: #f34b7d; }
+    .lang-cuda    { background: #76b900; }
+    .lang-r       { background: #198CE7; }
+    .lang-jupyter { background: #DA5B0B; }
+
+    /* ── MODEL SELECTOR ─────────────────────────────── */
+    .model-wrap { position: relative; padding: 7px 2px 0; }
+    .model-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--text-3); background: none;
+      border: none; cursor: pointer; font-family: inherit;
+      padding: 2px 0; transition: color 0.12s;
+    }
+    .model-btn:hover { color: var(--text-2); }
+    .model-btn svg { transition: transform 0.15s; }
+    .model-btn.open svg { transform: rotate(180deg); }
+
+    .model-dropdown {
+      position: absolute; bottom: calc(100% + 6px); left: 0;
+      background: #1e1b18; border: 1px solid var(--border);
+      border-radius: 10px; padding: 4px;
+      display: none; flex-direction: column; gap: 1px;
+      min-width: 160px; z-index: 100;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      animation: fade-up 0.12s ease both;
+    }
+    .model-dropdown.open { display: flex; }
+    .model-item {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; padding: 7px 10px; border-radius: 7px;
+      font-size: 13px; color: var(--text-2); cursor: pointer;
+      background: none; border: none; font-family: inherit;
+      text-align: left; transition: background 0.1s, color 0.1s;
+      white-space: nowrap;
+    }
+    .model-item:hover { background: var(--chip-bg); color: var(--text); }
+    .model-item.selected { color: var(--text); }
+    .model-item .check {
+      width: 14px; height: 14px; flex-shrink: 0;
+      color: var(--accent); opacity: 0;
+    }
+    .model-item.selected .check { opacity: 1; }
+    .model-item-sub { font-size: 11px; color: var(--text-3); }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .view-page { padding: 32px 24px; }
+      .greeting-text { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="brand" onclick="navigate('/')">
+      <div class="brand-mark">jg</div>
+      johngunerli
+    </div>
+    <a href="mailto:hakancangunerli@gmail.com" class="icon-btn" title="Email">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </a>
+  </div>
+  <nav class="nav">
+    <button class="nav-link" id="nav-home" onclick="navigate('/')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="nav-link" id="nav-blog" onclick="navigate('/blog')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Blog
+    </button>
+    <button class="nav-link" id="nav-projects" onclick="navigate('/projects')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Projects
+    </button>
+    <a href="https://github.com/johngunerli" target="_blank" class="nav-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    <a href="https://www.linkedin.com/in/hakancangunerli/" target="_blank" class="nav-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+  </nav>
+  <div class="section-label">Recent posts</div>
+  <div class="recents">
+    <button class="recent-link" id="recent-arts"      onclick="navigate('/blog/reflections-on-arts')">Reflections on the Arts</button>
+    <button class="recent-link" id="recent-social"    onclick="navigate('/blog/social-computing')">Social Computers/Computing</button>
+    <button class="recent-link" id="recent-curiosity" onclick="navigate('/blog/intellectual-curiosity')">Intellectual Curiosity</button>
+    <button class="recent-link" id="recent-hello"     onclick="navigate('/blog/helloworld')">Hello World!</button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">JG</div>
+      <div>
+        <div class="user-name">John Gunerli</div>
+        <div class="user-role">Sr. MLE · UPS Capital</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main id="main"></main>
+
+<script>
+// ── CONTENT DATA ───────────────────────────────────────────
+const posts = {
+  'reflections-on-arts': {
+    title: 'Reflections on the Arts', date: 'December 2023',
+    meta: 'Arts, Music, Culture, History',
+    tags: ['Arts','Music','Culture','History','Personal Thoughts'],
+    body: `<p>I oftentimes think about the arts. I'm not an artist by any means, but that's what makes the arts unique — you need not any education to enjoy it. This puts the arts in a unique place compared to the sciences.</p>
+           <p>As I am writing this, I am listening to 1920s ballroom music. These people are gone, most of their memories and aspirations long with them. Yet one thing remains: the arts. I feel the sway, the feelings they engraved in their music, much like how they are engraved on the vinyl records.</p>`
+  },
+  'social-computing': {
+    title: 'Social Computers/Computing', date: 'December 2023',
+    meta: 'Computing, Technology, Society, HCI',
+    tags: ['Computing','Technology','Society','HCI'],
+    body: `<p>We humans love to use the word <em>computing</em> a lot. In many introductory courses it is described as the first matter to be disclosed — pretty much defining everything as a computer capable of some form of electronic computation.</p>
+           <p>From a social perspective, we deal with computers every day and they become part of our social lives. Socially-aware machines that seamlessly interact with our society are vital for creating communities that can live in technologically advanced spaces.</p>`
+  },
+  'intellectual-curiosity': {
+    title: 'Intellectual Curiosity', date: 'December 2023',
+    meta: 'Psychology, Mind, Thought Process',
+    tags: ['Intellectual Curiosity','Psychology','Mind','Thought Process'],
+    body: `<p>I find intellectual curiosity to be a fascinating area of study. The mind serves as both a cage and a blank canvas. Like a garden, it's somewhere you can roam and take in unique scents and characters. Like a cage, it can feel claustrophobic when you're stuck with a problem you can't find the first steps toward solving.</p>
+           <p>I find myself there quite a lot. At even times of crisis my mind works more than it should — not always chasing intellectually grand questions, but problems requiring an inquiry of the mind. Almost as if I self-cage myself with a thought, mostly unintentionally, making the actual problem a secondary task.</p>`
+  },
+  'helloworld': {
+    title: 'Hello World!', date: 'April 2022',
+    meta: 'Blogging, Personal',
+    tags: ['Blogging','Personal','Research','Ideas'],
+    body: `<p>Welcome to my blog! Here I'm hoping to share my takes on things happening in the world, research papers I've been involved with, and my experience as a Yellowjacket!</p>
+           <p>I'll also write about some of my ideas — brilliant and shady alike.</p>
+           <p>If you get to see this page, let me know what you'd like to see here. I'd be more than happy to write about it!</p>
+           <p>Talk to y'all soon. I mean, not <em>talk talk</em> — but talk!</p>`
+  }
+};
+
+const projectGroups = [
+  { label: 'ML Systems & Infrastructure', items: [
+    { name:'embedding-server-cpp',    desc:'C++/Python image embedding server.',                              lang:'Python / C++', dot:'lang-python', url:'https://github.com/hakancangunerli/embedding-server-cpp' },
+    { name:'embedding_server_torch',  desc:'HTTP server serving ViT embeddings via LibTorch and Crow.',      lang:'C++',          dot:'lang-cpp',    url:'https://github.com/hakancangunerli/embedding_server_torch' },
+    { name:'centipede',               desc:'CUDA → C++ → FastAPI inference pipeline.',                       lang:'CUDA / Python', dot:'lang-cuda',   url:'https://github.com/hakancangunerli/centipede' },
+  ]},
+  { label: 'AI & NLP', items: [
+    { name:'CitationLLM',             desc:'LLM that retrieves and answers questions with cited sources.',    lang:'Python',       dot:'lang-python', url:'https://github.com/hakancangunerli/CitationLLM' },
+    { name:'citation-based-chatbot',  desc:'Streamlit chat/search app with multi-screen views.',             lang:'Python',       dot:'lang-python', url:'https://github.com/johngunerli/citation-based-chatbot' },
+    { name:'gemma-lora',              desc:'Fine-tuning Gemma models in Keras using LoRA.',                  lang:'Jupyter',      dot:'lang-jupyter',url:'https://github.com/johngunerli/gemma-lora' },
+    { name:'alphaMath',               desc:'Deep learning project from CS7643 at Georgia Tech.',             lang:'Jupyter',      dot:'lang-jupyter',url:'https://github.com/hakancangunerli/alphaMath' },
+  ]},
+  { label: 'Research & Science', items: [
+    { name:'GNN-AI-for-Science',      desc:"GNN assessment from Stanford's CS224W, applied to AI for Science.", lang:'Jupyter',   dot:'lang-jupyter',url:'https://github.com/hakancangunerli/GNN-AI-for-Science' },
+    { name:'axelbrot',                desc:"Hand-implemented Axelrod's tournaments for studying cooperative strategies.", lang:'Jupyter', dot:'lang-jupyter', url:'https://github.com/johngunerli/axelbrot' },
+  ]},
+  { label: 'Data & Visualization', items: [
+    { name:'city-comfort-index',      desc:'Comfortable days (65–75°F) across 210 U.S. cities over two decades.', lang:'Jupyter', dot:'lang-jupyter', url:'https://github.com/hakancangunerli/city-comfort-index' },
+    { name:'FIFAsongs',               desc:'Statistical analysis of FIFA soundtrack data.',                   lang:'Jupyter',      dot:'lang-jupyter',url:'https://github.com/johngunerli/FIFAsongs' },
+    { name:'gatech-crime',            desc:"Statistical analysis of crime data from GT's campus PD.",         lang:'R',            dot:'lang-r',      url:'https://github.com/johngunerli/gatech-crime' },
+    { name:'FDIC_rates',              desc:'Scraper for FDIC interest rate data with a Streamlit dashboard.', lang:'Python',       dot:'lang-python', url:'https://github.com/hakancangunerli/FDIC_rates' },
+  ]},
+];
+
+// ── VIEWS ──────────────────────────────────────────────────
+function homeView() {
+  const h = new Date().getHours();
+  const g = h<12 ? 'Good morning, John.' : h<17 ? 'Good afternoon, John.' : h<21 ? 'Good evening, John.' : 'Still up, John?';
+  return `<div class="view-home">
+    <div class="greeting">
+      <div class="brand-mark-lg">jg</div>
+      <h1 class="greeting-text">${g}</h1>
+    </div>
+    <div class="input-wrap">
+      <div class="input-box">
+        <button class="plus-btn" onclick="document.getElementById('q').focus()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <input class="input-field" id="q" type="text" placeholder="Ask about John…"
+               oninput="toggleSend(this)" onkeydown="onEnter(event)" />
+        <button class="send-btn" id="send-btn" onclick="submitQuery()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      ${modelSelectorHTML()}
+    </div>
+    <div class="chips">
+      <button class="chip" onclick="window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Resume
+      </button>
+      <button class="chip" onclick="navigate('/blog')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Blog
+      </button>
+      <button class="chip" onclick="navigate('/projects')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Projects
+      </button>
+      <button class="chip" onclick="location.href='mailto:hakancangunerli@gmail.com'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email
+      </button>
+      <button class="chip" onclick="window.open('https://github.com/johngunerli','_blank')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub
+      </button>
+      <button class="chip" onclick="window.open('https://www.youtube.com/@johngunerli/','_blank')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>YouTube
+      </button>
+    </div>
+  </div>`;
+}
+
+function blogListView() {
+  return `<div class="view-page">
+    <h1 class="page-title">Blog</h1>
+    <div class="posts">${Object.entries(posts).map(([slug,p])=>`
+      <button class="post-card" onclick="navigate('/blog/${slug}')">
+        <div class="post-date">${p.date}</div>
+        <div class="post-title">${p.title}</div>
+        <div class="post-desc">${p.meta}</div>
+        <div class="post-tags">${p.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function postView(slug) {
+  const p = posts[slug];
+  if (!p) return notFoundView();
+  return `<div class="view-page">
+    <button class="back-btn" onclick="navigate('/blog')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Blog
+    </button>
+    <div class="post-meta-h">${p.date} &nbsp;·&nbsp; ${p.meta}</div>
+    <h1 class="post-h1">${p.title}</h1>
+    <div class="post-body">${p.body}</div>
+    <div class="post-footer-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+  </div>`;
+}
+
+function projectsView() {
+  return `<div class="view-page">
+    <h1 class="page-title">Projects</h1>
+    <p class="page-desc">A mix of research, systems work, and things I built out of curiosity.</p>
+    ${projectGroups.map(g=>`
+      <div class="group">
+        <div class="group-label">${g.label}</div>
+        <div class="projects">${g.items.map(i=>`
+          <a href="${i.url}" target="_blank" class="project">
+            <div class="project-left">
+              <div class="project-name">${i.name}</div>
+              <div class="project-desc">${i.desc}</div>
+            </div>
+            <div class="project-lang"><span class="lang-dot ${i.dot}"></span>${i.lang}</div>
+          </a>`).join('')}
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function notFoundView() {
+  return `<div class="view-page"><h1 class="page-title">Not found.</h1></div>`;
+}
+
+// ── ROUTER ─────────────────────────────────────────────────
+function getView(path) {
+  if (path === '/' || path === '') return homeView();
+  if (path === '/blog')            return blogListView();
+  if (path === '/projects')        return projectsView();
+  if (path.startsWith('/blog/'))   return postView(path.replace('/blog/',''));
+  return notFoundView();
+}
+
+function updateNav(path) {
+  document.querySelectorAll('.nav-link, .recent-link').forEach(el => el.classList.remove('active'));
+  if (path === '/')         document.getElementById('nav-home')?.classList.add('active');
+  if (path.startsWith('/blog')) document.getElementById('nav-blog')?.classList.add('active');
+  if (path === '/projects') document.getElementById('nav-projects')?.classList.add('active');
+  const map = { '/blog/reflections-on-arts':'recent-arts', '/blog/social-computing':'recent-social', '/blog/intellectual-curiosity':'recent-curiosity', '/blog/helloworld':'recent-hello' };
+  if (map[path]) document.getElementById(map[path])?.classList.add('active');
+}
+
+function navigate(path) {
+  chatHistory = [];
+  history.pushState({}, '', path);
+  render(path);
+}
+
+function render(path) {
+  const main = document.getElementById('main');
+  main.innerHTML = getView(path);
+  updateNav(path);
+  main.scrollTop = 0;
+}
+
+window.addEventListener('popstate', () => { chatHistory = []; render(location.pathname); });
+render(location.pathname);
+
+// ── CHAT STATE ─────────────────────────────────────────────
+let chatHistory = [];
+let inChatMode = false;
+let selectedModel = 'auto';
+
+const MODEL_OPTIONS = [
+  { id: 'auto',                                   label: 'Auto',   sub: 'fallback chain' },
+  { id: 'google/gemma-3-12b-it:free',             label: 'Small',  sub: 'Gemma 3 12B' },
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Medium', sub: 'Llama 3.3 70B' },
+  { id: 'openai/gpt-oss-120b:free',               label: 'Large',  sub: 'GPT-OSS 120B' },
+];
+
+function currentModelLabel() {
+  return MODEL_OPTIONS.find(m => m.id === selectedModel)?.label ?? 'Auto';
+}
+
+function modelSelectorHTML() {
+  const checkSvg = `<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const chevron = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+  return `<div class="model-wrap">
+    <div class="model-dropdown" id="model-dropdown">
+      ${MODEL_OPTIONS.map(m => `
+        <button class="model-item${selectedModel===m.id?' selected':''}" onclick="selectModel('${m.id}')">
+          <span>${m.label} <span class="model-item-sub">${m.sub}</span></span>
+          ${checkSvg}
+        </button>`).join('')}
+    </div>
+    <button class="model-btn" id="model-btn" onclick="toggleModelDropdown(event)">
+      ${chevron}${currentModelLabel()}
+    </button>
+  </div>`;
+}
+
+function toggleModelDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('model-dropdown');
+  const btn = document.getElementById('model-btn');
+  if (!dd) return;
+  const isOpen = dd.classList.toggle('open');
+  btn?.classList.toggle('open', isOpen);
+  if (isOpen) {
+    const close = () => { dd.classList.remove('open'); btn?.classList.remove('open'); document.removeEventListener('click', close); };
+    document.addEventListener('click', close);
+  }
+}
+
+function selectModel(id) {
+  selectedModel = id;
+  refreshModelRows();
+}
+
+function refreshModelRows() {
+  document.querySelectorAll('.model-wrap').forEach(wrap => {
+    wrap.outerHTML = modelSelectorHTML();
+  });
+}
+
+const SYSTEM_PROMPT = `You are a personal assistant embedded in John Gunerli's portfolio website at johngunerli.com. Your job is to help visitors learn about John quickly and accurately.
+
+About John:
+- Full name: John (Hakan Can) Gunerli
+- Current role: Senior Machine Learning Engineer at UPS Capital, Alpharetta, GA
+- Education: M.S. Computer Science, Georgia Institute of Technology (2025); B.S. Computer Science, Georgia Tech
+- Research experience: Georgia Tech, Purdue University, Emory University's Winship Cancer Institute (graph ML applied to high-energy physics and cancer research)
+- Technical interests: machine learning systems, human-computer interaction (HCI), human-robot interaction (HRI), computer vision, NLP, reinforcement learning, social robotics
+- GitHub: github.com/johngunerli
+- LinkedIn: linkedin.com/in/hakancangunerli
+- Notable projects: ViT embedding servers in C++/LibTorch, CUDA→C++→FastAPI pipelines, CitationLLM, GNN-AI-for-Science, Gemma LoRA fine-tuning
+
+Instructions:
+- Answer in 2-3 sentences max. Be direct and specific.
+- If asked for the resume/CV, say it's available via the Resume button.
+- If asked about blog posts or projects, point to the Blog or Projects section.
+- Do not speculate about things not listed above. If unsure, say so.
+- Keep a friendly, professional tone — like a well-informed colleague, not a corporate bot.`;
+
+const navRoutes = {
+  resume:   ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
+  cv:       ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
+  blog:     ()=>navigate('/blog'),
+  projects: ()=>navigate('/projects'),
+  code:     ()=>navigate('/projects'),
+  github:   ()=>window.open('https://github.com/johngunerli','_blank'),
+  linkedin: ()=>window.open('https://www.linkedin.com/in/hakancangunerli/','_blank'),
+  youtube:  ()=>window.open('https://www.youtube.com/@johngunerli/','_blank'),
+  email:    ()=>{ location.href='mailto:hakancangunerli@gmail.com'; },
+  contact:  ()=>{ location.href='mailto:hakancangunerli@gmail.com'; },
+};
+
+function chatInputHTML() {
+  return `<div class="input-box">
+    <button class="plus-btn" onclick="document.getElementById('q').focus()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <input class="input-field" id="q" type="text" placeholder="Ask about John…"
+           oninput="toggleSend(this)" onkeydown="onEnter(event)" />
+    <button class="send-btn" id="send-btn" onclick="submitQuery()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  ${modelSelectorHTML()}`;
+}
+
+function switchToChatMode() {
+  inChatMode = true;
+  document.getElementById('main').innerHTML = `
+    <div class="view-chat">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-area">
+        <div class="input-wrap">${chatInputHTML()}</div>
+      </div>
+    </div>`;
+  document.getElementById('q').focus();
+}
+
+function appendUserMsg(text) {
+  const el = document.getElementById('chat-messages');
+  el.insertAdjacentHTML('beforeend', `
+    <div class="msg msg-user">
+      <div class="msg-bubble">${escHtml(text)}</div>
+    </div>`);
+  scrollChat();
+}
+
+function appendThinking() {
+  const el = document.getElementById('chat-messages');
+  el.insertAdjacentHTML('beforeend', `
+    <div class="msg msg-assistant" id="thinking-msg">
+      <div class="msg-avatar">jg</div>
+      <div class="msg-bubble"><div class="ai-thinking"><span></span><span></span><span></span></div></div>
+    </div>`);
+  scrollChat();
+}
+
+function replaceThinking(answer) {
+  const el = document.getElementById('thinking-msg');
+  if (el) {
+    el.removeAttribute('id');
+    el.querySelector('.msg-bubble').textContent = answer;
+  }
+  scrollChat();
+}
+
+function scrollChat() {
+  const el = document.getElementById('chat-messages');
+  if (el) el.scrollTop = el.scrollHeight;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleSend(input) {
+  document.getElementById('send-btn')?.classList.toggle('visible', input.value.trim().length > 0);
+}
+
+async function submitQuery() {
+  const input = document.getElementById('q');
+  const q = input.value.trim();
+  if (!q) return;
+
+  const lower = q.toLowerCase();
+  const route = Object.entries(navRoutes).find(([k]) => lower.includes(k));
+  if (route) { input.value = ''; toggleSend(input); route[1](); return; }
+
+  input.value = ''; toggleSend(input);
+
+  // Switch to chat mode on first AI query
+  if (!inChatMode) switchToChatMode(q);
+
+  appendUserMsg(q);
+  appendThinking();
+
+  chatHistory.push({ role: 'user', content: q });
+
+  const models = selectedModel === 'auto'
+    ? ['openai/gpt-oss-120b:free', 'meta-llama/llama-3.3-70b-instruct:free', 'google/gemma-3-12b-it:free']
+    : [selectedModel];
+
+  let answered = false;
+  for (const model of models) {
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer __OPENROUTER_KEY__', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],
+          max_tokens: 300,
+        })
+      });
+      if (res.status === 429) continue; // try next model
+      const data = await res.json();
+      const answer = data?.choices?.[0]?.message?.content
+                  || data?.error?.message
+                  || 'Something went wrong.';
+      chatHistory.push({ role: 'assistant', content: answer });
+      replaceThinking(answer);
+      answered = true;
+      break;
+    } catch { continue; }
+  }
+  if (!answered) replaceThinking("All free models are rate-limited right now — try again in a minute.");
+
+  document.getElementById('q')?.focus();
+}
+
+function onEnter(e) { if (e.key === 'Enter') submitQuery(); }
+</script>
+</body>
+</html>

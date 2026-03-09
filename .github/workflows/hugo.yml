@@ -1,47 +1,21 @@
-name: Deploy Hugo to Cloudflare Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   workflow_dispatch:
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
-defaults:
-  run:
-    shell: bash
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    env:
-      HUGO_VERSION: "0.112.4"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Install Hugo CLI
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-
-      - name: Update theme
-        run: git submodule update --remote --merge
-
-      - name: Build with Hugo
-        run: hugo --gc --minify --baseURL "https://johngunerli.com/"
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - uses: actions/checkout@v4
+      - name: Inject API key
+        run: sed -i 's|__OPENROUTER_KEY__|${{ secrets.OPENROUTER_KEY }}|g' index.html
+      - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: johngunerli
-          directory: public
+          directory: .
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
