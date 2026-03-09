@@ -1,4 +1,4 @@
-baseURL: "https://johngunerli.github.io/"
+baseURL: "https://johngunerli.com/"
 languageCode: en-us
 title: johngunerli
 theme: PaperMod
@@ -13,6 +13,10 @@ menu:
       name: Blog
       url: /blog
       weight: 20
+    - identifier: projects
+      name: Projects
+      url: /projects
+      weight: 30
     - identifier: CV
       name: CV
       url: "https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing"
@@ -33,8 +37,7 @@ params:
   profileMode:
     enabled: true
     title: "John Gunerli"
-    subtitle: Hi, 
-      I'm John Gunerli, a 5th-year Computer Science student at Georgia Institute of Technology completing my Bachelors this May with a thesis, and start my Masters in August 2024. I'm interested in the intersection of intelligence and people in computer science, particularly how humans interact with computers and computer-based systems. My focus tends to vary depending on the project I'm working on, but some areas I'm interested in include human-computer interaction, data analytics and visualization, robotics, and artificial intelligence. I'm active on this platform and can be reached by DM or email at hakancangunerli [at] protonmail [dot] com or hakancangunerli [at] gatech [dot] edu for Georgia Tech-related inquiries.
+    subtitle: "Hi, I'm John Gunerli — Senior Machine Learning Engineer at UPS Capital and a Master's graduate in Computer Science from Georgia Institute of Technology. I work at the intersection of ML systems and people: computer vision, NLP, reinforcement learning, human-computer interaction, and human-robot interaction. I've done research at Georgia Tech, Purdue University, and Emory's Winship Cancer Institute."
 
   # List View
   hideDescriptionInList: false
@@ -48,7 +51,7 @@ params:
     - name: "email"
       url: "mailto:hakancangunerli@gmail.com"
     - name: "linkedin"
-      url: "http://www.linkedin.com/in/hakancangunerli/"
+      url: "https://www.linkedin.com/in/hakancangunerli/"
     - name: "github"
       url: "https://github.com/johngunerli"
     - name: "youtube"
