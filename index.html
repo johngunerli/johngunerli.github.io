@@ -440,11 +440,22 @@
     @media (max-width: 768px) {
       .mobile-menu-btn { display: flex; }
       .view-page { padding: 32px 24px; padding-top: 72px; }
-      .greeting-text { font-size: 26px; }
-      .view-home { padding-top: 40px; }
-      
-      /* Make sure hamburger doesn't interfere with chat input */
-      .chat-input-area { padding-top: 12px; }
+      .greeting-text { font-size: 22px; }
+      .view-home {
+        padding: 16px;
+        padding-top: 64px;
+        justify-content: flex-start;
+        gap: 20px;
+        min-height: 0;
+      }
+      .brand-mark-lg { width: 38px; height: 38px; font-size: 14px; }
+      .chips { gap: 6px; }
+      .chip { font-size: 12px; padding: 6px 11px; }
+      .input-wrap { max-width: 100%; }
+      .view-chat { height: 100dvh; }
+      .chat-messages { padding: 16px; padding-top: 60px; }
+      .chat-input-area { padding: 8px 12px 16px; }
+      .chat-input-area .input-wrap { max-width: 100%; }
     }
   </style>
 </head>
@@ -1206,22 +1217,22 @@ async function submitQuery() {
   let answered = false;
   for (const model of models) {
     try {
-      // Try Cloudflare Function first, fallback to direct OpenRouter for local dev
       const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.port;
       const apiUrl = isLocalDev ? 'https://openrouter.ai/api/v1/chat/completions' : '/api/chat';
       const headers = { 'Content-Type': 'application/json' };
-      
-      // Add API key header only for local dev (not needed for Cloudflare Function)
+
       if (isLocalDev) {
         const apiKey = localStorage.getItem('openrouter_api_key');
         if (!apiKey) {
-          replaceThinking("⚠️ Local development: Set your API key in console:\n\nlocalStorage.setItem('openrouter_api_key', 'sk-or-v1-...')");
+          replaceThinking("⚠️ Local dev: set key in console:\nlocalStorage.setItem('openrouter_api_key', 'sk-or-v1-...')");
           answered = true;
           break;
         }
         headers['Authorization'] = `Bearer ${apiKey}`;
+        headers['HTTP-Referer'] = 'https://johngunerli.com';
+        headers['X-Title'] = 'johngunerli.com';
       }
-      
+
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers,
@@ -1231,19 +1242,12 @@ async function submitQuery() {
           max_tokens: 300,
         })
       });
-      
+
       if (res.status === 429) {
-        // Rate limited - wait a bit before trying next model
         await new Promise(resolve => setTimeout(resolve, 1000));
         continue;
       }
-      
-      if (res.status === 405) {
-        replaceThinking("⚠️ API endpoint not available. Deploy to Cloudflare Pages or add API key for local dev.");
-        answered = true;
-        break;
-      }
-      
+
       const data = await res.json();
       const answer = data?.choices?.[0]?.message?.content
                   || data?.error?.message

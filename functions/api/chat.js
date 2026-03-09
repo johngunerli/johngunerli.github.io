@@ -14,36 +14,38 @@ export async function onRequestPost({ request, env }) {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Check for API key - try both common variable names
+  const apiKey = env.OPENROUTER_API_KEY || env.OPENROUTER_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'API key not configured. Add OPENROUTER_API_KEY to Cloudflare Pages environment variables.' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    });
+  }
+
   try {
-    // Get request body from frontend
     const body = await request.json();
 
-    // Call OpenRouter API with your secret key
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://johngunerli.com',
+        'X-Title': 'johngunerli.com',
       },
       body: JSON.stringify(body),
     });
 
     const data = await response.json();
 
-    // Return response to frontend
     return new Response(JSON.stringify(data), {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: response.status,
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });
   }
