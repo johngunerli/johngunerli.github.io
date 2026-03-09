@@ -767,12 +767,10 @@ function getView(path) {
 
 function updateNav(path) {
   document.querySelectorAll('.nav-link, .recent-link').forEach(el => el.classList.remove('active'));
-  if (path === '/')         document.getElementById('nav-home')?.classList.add('active');
-  if (path.startsWith('/blog')) document.getElementById('nav-blog')?.classList.add('active');
-  if (path === '/projects') document.getElementById('nav-projects')?.classList.add('active');
-  if (path === '/artifacts') document.getElementById('nav-artifacts')?.classList.add('active');
-  const map = { '/blog/reflections-on-arts':'recent-arts', '/blog/social-computing':'recent-social', '/blog/intellectual-curiosity':'recent-curiosity', '/blog/helloworld':'recent-hello' };
-  if (map[path]) document.getElementById(map[path])?.classList.add('active');
+  if (path === '/')                document.getElementById('nav-home')?.classList.add('active');
+  if (path.startsWith('/blog'))    document.getElementById('nav-blog')?.classList.add('active');
+  if (path === '/projects')        document.getElementById('nav-projects')?.classList.add('active');
+  if (path === '/artifacts')       document.getElementById('nav-artifacts')?.classList.add('active');
 }
 
 function navigate(path) {
@@ -947,7 +945,12 @@ const MODEL_OPTIONS = [
   { id: 'nvidia/nemotron-nano-9b-v2:free',        label: 'Small',  sub: 'Nemotron 9B' },
 ];
 
-window.addEventListener('popstate', () => { chatHistory = []; render(location.pathname); });
+window.addEventListener('popstate', () => {
+  chatHistory = [];
+  inChatMode = false;
+  currentSessionId = null;
+  render(location.pathname);
+});
 loadChatSessions(); // Load chat history on page load
 render(location.pathname);
 
@@ -1014,24 +1017,6 @@ Instructions:
 - If asked about blog posts or projects, point to the Blog or Projects section.
 - Do not speculate about things not listed above. If unsure, say so.
 - Keep a friendly, professional tone — like a well-informed colleague, not a corporate bot.`;
-
-const navRoutes = {
-  resume:    ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
-  cv:        ()=>window.open('https://drive.google.com/drive/folders/1oGVqzsSogTQFBSXsNNQk5X5MIUXGjVvI?usp=sharing','_blank'),
-  blog:      ()=>navigate('/blog'),
-  projects:  ()=>navigate('/projects'),
-  code:      ()=>navigate('/projects'),
-  artifacts: ()=>navigate('/artifacts'),
-  photos:    ()=>navigate('/artifacts'),
-  gallery:   ()=>navigate('/artifacts'),
-  github:    ()=>window.open('https://github.com/johngunerli','_blank'),
-  linkedin:  ()=>window.open('https://www.linkedin.com/in/hakancangunerli/','_blank'),
-  youtube:   ()=>window.open('https://www.youtube.com/@johngunerli/','_blank'),
-  email:     ()=>{ location.href='mailto:me@johngunerli.com'; },
-  contact:   ()=>{ location.href='mailto:me@johngunerli.com'; },
-  meeting:   ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
-  calendar:  ()=>window.open('https://calendar.app.google/xzXuLCv1Ff85Gp1JA','_blank'),
-};
 
 // Enhanced pattern matching for natural language queries (returns text responses!)
 function detectIntent(query) {
