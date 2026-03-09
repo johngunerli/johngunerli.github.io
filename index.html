@@ -198,7 +198,7 @@
     .input-box:focus-within { border-color: var(--border-alt); }
     .input-field {
       background: none; border: none; outline: none;
-      font-family: 'DM Sans', sans-serif; font-size: 14.5px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text);
       width: 100%; resize: none; min-height: 24px; line-height: 1.5;
     }
     .input-field::placeholder { color: var(--text-3); }
@@ -641,7 +641,8 @@ function homeView() {
     <div class="input-wrap">
       <div class="input-box">
         <input class="input-field" id="q" type="text" placeholder="Ask about John…"
-               oninput="toggleSend(this)" onkeydown="onEnter(event)" />
+               oninput="toggleSend(this)" onkeydown="onEnter(event)"
+               onblur="resetViewportZoom()" />
         <div class="input-toolbar">
           ${modelSelectorHTML()}
           <button class="send-btn" id="send-btn" onclick="submitQuery()">
@@ -1086,7 +1087,8 @@ function detectIntent(query) {
 function chatInputHTML() {
   return `<div class="input-box">
     <input class="input-field" id="q" type="text" placeholder="Ask about John…"
-           oninput="toggleSend(this)" onkeydown="onEnter(event)" />
+           oninput="toggleSend(this)" onkeydown="onEnter(event)"
+           onblur="resetViewportZoom()" />
     <div class="input-toolbar">
       ${modelSelectorHTML()}
       <button class="send-btn" id="send-btn" onclick="submitQuery()">
@@ -1179,6 +1181,14 @@ function scrollChat() {
 
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function resetViewportZoom() {
+  // iOS Safari zooms in when focusing an input < 16px font-size and doesn't
+  // always zoom back out on blur. Force a scroll-position reset to fix this.
+  if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+    setTimeout(() => { window.scrollTo(0, 0); }, 100);
+  }
 }
 
 function toggleSend(input) {
