@@ -14,6 +14,7 @@ A personal portfolio SPA for John Gunerli, hosted on Cloudflare Pages. **Zero bu
 
 ```text
 index.html              — Everything: HTML, all CSS, all JS, all view content
+data/posts.js           — Blog post content, keyed by slug (loaded before main script)
 functions/api/chat.js   — Cloudflare Pages Function (server-side API proxy)
 _redirects              — Cloudflare Pages URL redirects
 .gitignore              — Ignores .env and .hugo_build.lock
@@ -45,7 +46,7 @@ There is **no** build output directory, **no** `node_modules`, **no** Hugo setup
 
   <script>
     ── CONTENT DATA ──────────────────────────
-    const posts            — blog post content, keyed by slug
+    const posts            — blog post content (loaded from data/posts.js)
     const projectGroups    — projects list, grouped by category
     const instagramPosts   — artifact URLs
 

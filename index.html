@@ -561,41 +561,9 @@
 
 <main id="main"></main>
 
+<script src="/data/posts.js"></script>
 <script>
 // ── CONTENT DATA ───────────────────────────────────────────
-const posts = {
-  'reflections-on-arts': {
-    title: 'Reflections on the Arts', date: 'December 2023',
-    meta: 'Arts, Music, Culture, History',
-    tags: ['Arts','Music','Culture','History','Personal Thoughts'],
-    body: `<p>I oftentimes think about the arts. I'm not an artist by any means, but that's what makes the arts unique — you need not any education to enjoy it. This puts the arts in a unique place compared to the sciences.</p>
-           <p>As I am writing this, I am listening to 1920s ballroom music. These people are gone, most of their memories and aspirations long with them. Yet one thing remains: the arts. I feel the sway, the feelings they engraved in their music, much like how they are engraved on the vinyl records.</p>`
-  },
-  'social-computing': {
-    title: 'Social Computers/Computing', date: 'December 2023',
-    meta: 'Computing, Technology, Society, HCI',
-    tags: ['Computing','Technology','Society','HCI'],
-    body: `<p>We humans love to use the word <em>computing</em> a lot. In many introductory courses it is described as the first matter to be disclosed — pretty much defining everything as a computer capable of some form of electronic computation.</p>
-           <p>From a social perspective, we deal with computers every day and they become part of our social lives. Socially-aware machines that seamlessly interact with our society are vital for creating communities that can live in technologically advanced spaces.</p>`
-  },
-  'intellectual-curiosity': {
-    title: 'Intellectual Curiosity', date: 'December 2023',
-    meta: 'Psychology, Mind, Thought Process',
-    tags: ['Intellectual Curiosity','Psychology','Mind','Thought Process'],
-    body: `<p>I find intellectual curiosity to be a fascinating area of study. The mind serves as both a cage and a blank canvas. Like a garden, it's somewhere you can roam and take in unique scents and characters. Like a cage, it can feel claustrophobic when you're stuck with a problem you can't find the first steps toward solving.</p>
-           <p>I find myself there quite a lot. At even times of crisis my mind works more than it should — not always chasing intellectually grand questions, but problems requiring an inquiry of the mind. Almost as if I self-cage myself with a thought, mostly unintentionally, making the actual problem a secondary task.</p>`
-  },
-  'helloworld': {
-    title: 'Hello World!', date: 'April 2022',
-    meta: 'Blogging, Personal',
-    tags: ['Blogging','Personal','Research','Ideas'],
-    body: `<p>Welcome to my blog! Here I'm hoping to share my takes on things happening in the world, research papers I've been involved with, and my experience as a Yellowjacket!</p>
-           <p>I'll also write about some of my ideas — brilliant and shady alike.</p>
-           <p>If you get to see this page, let me know what you'd like to see here. I'd be more than happy to write about it!</p>
-           <p>Talk to y'all soon. I mean, not <em>talk talk</em> — but talk!</p>`
-  }
-};
-
 const projectGroups = [
   { label: 'ML Systems & Infrastructure', items: [
     { name:'embedding-server-cpp',    desc:'C++/Python image embedding server.',                              lang:'Python / C++', dot:'lang-python', url:'https://github.com/hakancangunerli/embedding-server-cpp' },
