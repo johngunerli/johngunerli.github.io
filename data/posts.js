@@ -58,14 +58,4 @@ const posts = {
            <p>If you get to see this page, let me know what you'd like to see here. I'd be more than happy to write about it!</p>
            <p>Talk to y'all soon. I mean, not <em>talk talk</em> — but talk!</p>`
   },
-  'quiting-note': {
-    title: "quitting",
-    date: "March 2026",
-    meta: "Notes",
-    tags: [],
-    body: `<h1>quiting note</h1>
-<p>Alright, I’ll keep it together. No promises though. When I first joined this team, I had no idea what I was walking into. I thought I knew machine learning. I thought I had a handle on what good work looked like. And then I sat next to all of you, and I realized, pretty quickly, that I had a lot to learn.</p>
-<p>I’ve been thinking a lot about what to say today, and honestly, the most honest thing I can tell you is this: I’ve done nothing here on my own. Everything I’m walking away with, every instinct I’ve sharpened, every lesson I’m carrying into whatever comes next, it came from watching each of you work. I am just an amalgamation of the incredible things all of you have built and figured out and fought for in this room. So if I’m leaving here better than I came in, that’s entirely on you.</p>
-<p>To this team specifically: you are genuinely one of the smartest, most collaborative groups of people I’ve ever been around. I don’t know exactly what’s next for me. But I know the standard I’m holding myself to, because I’ve seen what good looks like. And it looks like all of you. Thank you. Genuinely. For everything</p>`
-  },
 };
