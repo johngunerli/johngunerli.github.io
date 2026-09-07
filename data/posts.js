@@ -1,13 +1,23 @@
 // ── BLOG POST CONTENT ─────────────────────────────────────
 // Each key is the URL slug: /blog/<slug>
 const posts = {
+  'ai-adoption': {
+    title: 'Reflection on AI usage',
+    date: 'September 2026',
+    meta: '',
+    tags: [],
+    body: `<p>i think generative ai -- to a certain extent -- has completely transformed the human experience. although most of my work has been on the textual modality and it's a bit too early to see the long-term effects of these systems in a meaningfully measurable way, it's not unfair to say that in the majority of the public discourse, the entire Socratic method has more so been turned into a cooperative effort between the human and the machine, instead of an entirely human operation. which is both concerning and exciting.</p>
+           <p>contrary to popular belief, i do think there's a benefit to offloading some of the more common-sense operations to artificial intelligence. it's almost like applying a bell curve to the overall population. however, the downside effect is that some of the human experience is mostly learnt through living a particular event, so as the population ages, i'm not quite sure if humans of the future will learn how to apply things effectively, if they co-operate their life-events.</p>
+           <p>it's a weird thing to think about. we're drastically lowering the intelligence gap that has existed throughout the entirety of human existence and experience, leading to the downfall and the rising of various cultures and groups. it might also potentially mean that all humans sound the same, given that, as it stands now, as much as we'd like to argue otherwise, ai is still ethnocentric, and monoethnic (mostly). it has biases. it has constructs that are ultimately built on the constructs of what can be hijacked from the public and modern internet.</p>`
+  },
   'reflections-on-arts': {
     title: 'Reflections on the Arts',
-    date: 'December 2023',
+    date: 'December 2023 -- Edited July 2026',
     meta: 'Arts, Music, Culture, History',
     tags: ['Arts', 'Music', 'Culture', 'History', 'Personal Thoughts'],
-    body: `<p>I oftentimes think about the arts. I'm not an artist by any means, but that's what makes the arts unique — you need not any education to enjoy it. This puts the arts in a unique place compared to the sciences.</p>
-           <p>As I am writing this, I am listening to 1920s ballroom music. These people are gone, most of their memories and aspirations long with them. Yet one thing remains: the arts. I feel the sway, the feelings they engraved in their music, much like how they are engraved on the vinyl records.</p>`
+    body: `<p><code>I oftentimes think about the arts. I'm not an artist by any means, but that's what makes the arts unique: you need not any education to enjoy it. This puts the arts in a unique place compared to the sciences. As I am writing this, I am listening to 1920s ballroom music. These people are gone, most of their memories and aspirations long with them. Yet one thing remains: the arts. I feel the sway, the feelings they engraved in their music, much like how they are engraved on the vinyl records.</code></p>
+           <p>When I wrote those two paragraphs in December of 2023, gpt-4 had just arrived and claude 2 was out. The argument was that what makes something art is that it makes you feel something, and the fact that you feel it at all is what makes you human. It hadn't occurred to me back then that "art is human" is a claim that I'd ever have to defend.</p>
+           <p>Though I should admit I have been trying to work out what the arts mean to me for a while, and trying to expand on this idea to a larger scale. At twenty I wanted to begin writing about my perception of my childhood, and how I thought about certain things, because I thought I was too scared to forget about myself. In that piece, I also tried to define art, and I was trying to be very specific about it. "There's no proper scientific definition," I said, but mine was this: "Art is visually or aurally compelling material that depicts creativity and imagination." Science solves problems and answers questions creatively; art uses imagination to make things that are a pleasure to look at, hear, or move to. Nothing else. The humanities sit next door to art but must never be merged with it. Art is art. Even though art is ultimately done for pleasure and depiction, I argued that art also obeys no one. It doesn't follow what society wants, doesn't answer to authority, doesn't respect respectability; suppress it and you only get more of it. A cockroach, I called it, to the people trying to stamp it out. Its only rule is that it has no rules.</p>`
   },
   'social-computing': {
     title: 'Social Computers/Computing',

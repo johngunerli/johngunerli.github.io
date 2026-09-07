@@ -2,3 +2,7 @@
 .hugo_build.lock
 .wrangler/
 .playwright-mcp/
+
+# local post editor — runs on your machine only, never deployed
+tools/
+data/posts.js.bak
