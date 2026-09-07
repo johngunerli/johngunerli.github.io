@@ -346,13 +346,33 @@
 
     /* ── ARTIFACTS ──────────────────────────────────────── */
     .artifacts-grid {
-      columns: 2; gap: 16px; max-width: 720px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 20px 16px; max-width: 760px;
     }
-    .artifacts-grid .ig-wrap {
-      break-inside: avoid; margin-bottom: 16px;
+    .film { display: block; text-decoration: none; color: inherit; }
+    .film-poster {
+      width: 100%; aspect-ratio: 2 / 3; object-fit: cover; display: block;
+      border-radius: 6px; border: 1px solid var(--border); background: var(--chip-bg);
+      transition: border-color .15s ease, transform .15s ease;
     }
-    .artifacts-grid .instagram-media { min-width: unset !important; width: 100% !important; }
-    @media (max-width: 600px) { .artifacts-grid { columns: 1; } }
+    .film:hover .film-poster { border-color: var(--border-alt); transform: translateY(-2px); }
+    .film-title {
+      font-size: 12px; margin-top: 8px; line-height: 1.35;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .film-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .film-stars { color: var(--accent); letter-spacing: .5px; }
+    .film-skeleton {
+      width: 100%; aspect-ratio: 2 / 3; border-radius: 6px;
+      background: var(--chip-bg); border: 1px solid var(--border);
+      animation: film-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes film-pulse { 0%,100% { opacity: .45; } 50% { opacity: .8; } }
+    .film-note { font-size: 13px; color: var(--text-3); }
+    .film-note a { color: var(--accent); }
+    @media (max-width: 600px) {
+      .artifacts-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 16px 12px; }
+    }
 
     /* ── MODEL SELECTOR ─────────────────────────────── */
     .model-wrap { position: relative; }
@@ -589,13 +609,9 @@ const projectGroups = [
 ];
 
 // ── ARTIFACTS DATA ────────────────────────────────────────────
-const instagramPosts = [
-  { url: 'https://www.instagram.com/p/DSRbd1Xjkvk/' },
-  { url: 'https://www.instagram.com/p/DPCVc4HD5Hj/' },
-  { url: 'https://www.instagram.com/p/DOUQ7JOj7UM/' },
-  { url: 'https://www.instagram.com/p/DFQP3OtRhQ5/' },
-  // Add more posts here: { url: 'https://www.instagram.com/p/YOUR_POST_ID/' },
-];
+// Films come live from /api/watching, which proxies the Letterboxd RSS feed.
+const LETTERBOXD_URL = 'https://letterboxd.com/johngunerli/films/';
+const WATCH_CACHE_KEY = 'watching-cache';
 
 // ── VIEWS ──────────────────────────────────────────────────
 function homeView() {
@@ -694,29 +710,84 @@ function projectsView() {
 }
 
 function artifactsView() {
-  // Load Instagram embed script if not already loaded
-  if (!document.getElementById('instagram-embed-script')) {
-    const script = document.createElement('script');
-    script.id = 'instagram-embed-script';
-    script.async = true;
-    script.src = '//www.instagram.com/embed.js';
-    document.body.appendChild(script);
-  } else if (window.instgrm) {
-    // Re-process embeds if script already loaded
-    setTimeout(() => window.instgrm.Embeds.process(), 100);
-  }
-  
+  // The grid is filled in by loadWatching(), which runs once #main has been written.
+  setTimeout(loadWatching, 0);
+
   return `<div class="view-page">
     <h1 class="page-title">Artifacts</h1>
-    <p class="page-desc">A collection of visual moments and creative explorations.</p>
-    <div class="artifacts-grid">
-      ${instagramPosts.map(post => `
-        <div class="ig-wrap">
-          <blockquote class="instagram-media" data-instgrm-permalink="${post.url}" data-instgrm-version="14"></blockquote>
-        </div>
-      `).join('')}
+    <p class="page-desc">What I've been watching lately, straight from <a href="${LETTERBOXD_URL}" target="_blank">Letterboxd</a>.</p>
+    <div class="artifacts-grid" id="watch-grid">
+      ${Array.from({length: 12}, () => '<div class="film-skeleton"></div>').join('')}
     </div>
   </div>`;
+}
+
+// ── WATCHING ───────────────────────────────────────────────
+function escAttr(s) {
+  return escHtml(String(s)).replace(/"/g, '&quot;');
+}
+
+function starsHTML(rating) {
+  if (!rating) return '';
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return `<span class="film-stars">${'★'.repeat(full)}${half ? '½' : ''}</span>`;
+}
+
+function watchedLabel(item) {
+  if (!item.watched) return '';
+  // Date-only strings parse as UTC, so read the parts back in UTC too.
+  const d = new Date(`${item.watched}T00:00:00Z`);
+  if (isNaN(d)) return '';
+  const when = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  return `Watched ${when}${item.rewatch ? ' · rewatch' : ''}`;
+}
+
+function filmCardHTML(item) {
+  const stars = starsHTML(item.rating);
+  const meta = [item.year, stars].filter(Boolean).join(' · ');
+  return `<a class="film" href="${escAttr(item.url || LETTERBOXD_URL)}" target="_blank" rel="noopener">
+    ${item.poster
+      ? `<img class="film-poster" src="${escAttr(item.poster)}" alt="${escAttr(item.title)} poster" loading="lazy" />`
+      : `<div class="film-poster"></div>`}
+    <div class="film-title" title="${escAttr(item.title)}">${escHtml(item.title)}</div>
+    <div class="film-meta">${meta}</div>
+    <div class="film-meta">${escHtml(watchedLabel(item))}</div>
+  </a>`;
+}
+
+function renderWatching(items) {
+  const grid = document.getElementById('watch-grid');
+  if (!grid) return;
+  grid.innerHTML = items.map(filmCardHTML).join('');
+}
+
+function watchNote(html) {
+  const grid = document.getElementById('watch-grid');
+  if (!grid) return;
+  grid.style.display = 'block';
+  grid.innerHTML = `<p class="film-note">${html}</p>`;
+}
+
+async function loadWatching() {
+  // Paint the last known list first so there's no empty flash while fetching.
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(WATCH_CACHE_KEY) || 'null'); } catch (e) {}
+  if (cached && cached.length) renderWatching(cached);
+
+  try {
+    const res = await fetch('/api/watching');
+    if (!res.ok) throw new Error(`api responded ${res.status}`);
+
+    const data = await res.json();
+    if (!data.items || !data.items.length) throw new Error(data.error || 'no films returned');
+
+    renderWatching(data.items);
+    try { localStorage.setItem(WATCH_CACHE_KEY, JSON.stringify(data.items)); } catch (e) {}
+  } catch (e) {
+    if (cached && cached.length) return;   // stale list beats an error message
+    watchNote(`Couldn't load this right now — it's all on <a href="${LETTERBOXD_URL}" target="_blank">Letterboxd</a>.`);
+  }
 }
 
 function notFoundView() {
@@ -908,9 +979,9 @@ function renderChatHistory() {
 
 const MODEL_OPTIONS = [
   { id: 'auto',                                   label: 'Auto',   sub: 'fallback chain' },
-  { id: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Large',  sub: 'Llama 3.3 70B' },
-  { id: 'openai/gpt-oss-20b:free',                label: 'Medium', sub: 'GPT-OSS 20B' },
-  { id: 'nvidia/nemotron-nano-9b-v2:free',        label: 'Small',  sub: 'Nemotron 9B' },
+  { id: 'nvidia/nemotron-3-ultra-550b-a55b:free',  label: 'Large',  sub: 'Nemotron 3 Ultra' },
+  { id: 'minimax/minimax-m3:free',                 label: 'Medium', sub: 'MiniMax M3' },
+  { id: 'dots-studio/dots-3-note-preview:free',    label: 'Small',  sub: 'Dots 3 Note' },
 ];
 
 window.addEventListener('popstate', () => {
@@ -1017,8 +1088,8 @@ function detectIntent(query) {
   }
   
   // Artifacts patterns
-  if (/\b(artifacts?|photos?|gallery|pictures?|images?)\b/.test(lower)) {
-    return "Check out John's artifacts and photos in the **Artifacts** section!";
+  if (/\b(artifacts?|movies?|films?|watch(ing|ed)?|letterboxd|cinema)\b/.test(lower)) {
+    return "The **Artifacts** section tracks what John's been watching lately, synced from his [Letterboxd](https://letterboxd.com/johngunerli/films/).";
   }
   
   // Social media patterns
@@ -1178,7 +1249,7 @@ async function submitQuery() {
   chatHistory.push({ role: 'user', content: q });
 
   const models = selectedModel === 'auto'
-    ? ['meta-llama/llama-3.3-70b-instruct:free', 'openai/gpt-oss-20b:free', 'nvidia/nemotron-nano-9b-v2:free']
+    ? ['nvidia/nemotron-3-ultra-550b-a55b:free', 'minimax/minimax-m3:free', 'dots-studio/dots-3-note-preview:free']
     : [selectedModel];
 
   let answered = false;
@@ -1216,9 +1287,11 @@ async function submitQuery() {
       }
 
       const data = await res.json();
-      const answer = data?.choices?.[0]?.message?.content
-                  || data?.error?.message
-                  || 'Something went wrong.';
+      // Many free models are reasoning-only and can spend the whole token budget
+      // thinking, returning empty content. Fall through to the next model instead
+      // of showing the user a blank reply.
+      const answer = (data?.choices?.[0]?.message?.content || '').trim();
+      if (!answer) continue;
       chatHistory.push({ role: 'assistant', content: answer });
       replaceThinking(answer);
       answered = true;

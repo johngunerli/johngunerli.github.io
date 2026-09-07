@@ -1,2 +1,4 @@
 .env
 .hugo_build.lock
+.wrangler/
+.playwright-mcp/
