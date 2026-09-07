@@ -40,11 +40,13 @@ function parseFeed(xml) {
       url: tag(block, 'link'),
       poster: poster ? unescapeXml(poster) : null,
     });
-
-    if (items.length >= MAX_ITEMS) break;
   }
 
-  return items;
+  // The feed is ordered by when an entry was logged, not when it was watched,
+  // so a backfilled batch of old films would otherwise fill the whole page.
+  items.sort((a, b) => (b.watched || '').localeCompare(a.watched || ''));
+
+  return items.slice(0, MAX_ITEMS);
 }
 
 export async function onRequestGet() {
